@@ -56,5 +56,34 @@ else
   echo " [FAIL] Права ключа не 600"; ((FAIL++))
 fi
 
+echo "[5] Контейнеризация"
+# а) Служба docker активна
+if [[ "$(systemctl is-active docker)" == "active" ]]; then
+  echo " [OK] Служба Docker активна"; ((PASS++))
+else
+  echo " [FAIL] Служба Docker не активна"; ((FAIL++))
+fi
+
+# б) Контейнер СУБД в состоянии healthy
+if [[ "$(sudo docker inspect -f '{{.State.Health.Status}}' app-db-1 2>/dev/null)" == "healthy" ]]; then
+  echo " [OK] Контейнер СУБД healthy"; ((PASS++))
+else
+  echo " [FAIL] Контейнер СУБД не healthy"; ((FAIL++))
+fi
+
+# в) Порты 5000 и 5432 не прослушиваются на внешних адресах
+if ! sudo ss -tln | grep -E '0\.0\.0\.0:(5000|5432)|\[::\]:(5000|5432)' > /dev/null; then
+  echo " [OK] Порты 5000 и 5432 не прослушиваются извне"; ((PASS++))
+else
+  echo " [FAIL] Порты 5000 или 5432 доступны извне"; ((FAIL++))
+fi
+
+# г) Права файла .env равны 600
+if [[ "$(sudo stat -c '%a' /home/devops/app/.env 2>/dev/null)" == "600" ]]; then
+  echo " [OK] Права файла .env (600)"; ((PASS++))
+else
+  echo " [FAIL] Права файла .env не 600"; ((FAIL++))
+fi
+
 echo "Пройдено: $PASS, не пройдено: $FAIL"
 [[ $FAIL -eq 0 ]] && exit 0 || exit 1

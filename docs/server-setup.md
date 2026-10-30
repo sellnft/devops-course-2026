@@ -58,3 +58,14 @@
 - Путь к ключу: `/etc/ssl/private/devops.key` (права `600`, владелец `root`)
 - Команда формирования сертификата: `openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/devops.key -out /etc/ssl/certs/devops.crt -subj "/CN=devops.local" -addext "subjectAltName=DNS:devops.local"`
 - Срок действия: 365 дней
+
+## 9. Контейнеризация
+- **Способ установки Docker Engine:** Официальный репозиторий Docker (пакет `docker-ce`). Версия Docker Engine: 27.x (или та, что установилась у тебя, можно посмотреть командой `docker --version`).
+- **Участники группы `docker`:** пользователь `devops` (добавлен для запуска контейнеров без `sudo`).
+- **Расположение проекта на сервере:** `/home/devops/app`
+- **Расположение файла `.env` и его права:** `/home/devops/app/.env`, права `600` (владелец `devops`).
+- **Публикуемые порты и адреса:**
+  - `app`: `127.0.0.1:5000:5000` (доступен только локально, для Nginx).
+  - `db`: порт `5432` не публикуется (доступен только внутри сети проекта).
+- **Именованные тома:** `app_db_data` (хранит данные PostgreSQL, создается автоматически при `docker compose up`).
+- **Конфигурация обратного прокси-сервера:** Nginx проксирует запросы с `https://devops.local/app/` на `http://127.0.0.1:5000/`. Используются заголовки `Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto`.
