@@ -1,0 +1,6 @@
+---
+app_image: "ghcr.io/sellnft/devops-ci-app"
+app_tag: "216303ecc0c5b1adc29a6325e8f2e6a3e0dbe20e"
+app_container_name: "devops-ci-app"
+app_host_port: 5000
+app_internal_port: 5000
