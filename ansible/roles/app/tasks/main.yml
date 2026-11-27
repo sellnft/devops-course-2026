@@ -25,7 +25,7 @@
   ansible.builtin.uri:
     url: "http://127.0.0.1:{{ app_host_port }}/health"
     return_content: true
-    register: app_health
+  register: app_health
   retries: 15
   delay: 2
   until: >

@@ -3,7 +3,7 @@
   ansible.builtin.assert:
     that:
       - ansible_distribution == "Ubuntu"
-      - ansible_distribution_version is version("24.04", "==")
+      - ansible_distribution_version is version("24.04", ">=")
       - ansible_architecture == "x86_64"
     fail_msg: "Требуется Ubuntu Server 24.04 amd64"
 
@@ -25,11 +25,11 @@
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
-    uris: https://docker.com
-    suites: "{{ ansible_distribution_release }}"
+    uris: https://download.docker.com/linux/ubuntu
+    suites: noble
     components: [stable]
     architectures: [amd64]
-    signed_by: https://docker.com/gpg
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
 - name: Install Docker Engine
